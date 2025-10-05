@@ -11,17 +11,18 @@ import org.bukkit.entity.Player;
 
 import net.md_5.bungee.api.ChatColor;
 import openrp.descriptions.events.ORPDescriptionsChangeEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class Command_OPENRP implements CommandExecutor, TabCompleter {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 
 	public Command_OPENRP(OpenRP plugin) {
 		this.plugin = plugin;
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String @NotNull [] args) {
 
 		/*
 		 * No longer required. See Command#setPermission(); if
@@ -30,14 +31,14 @@ public class Command_OPENRP implements CommandExecutor, TabCompleter {
 		 */
 
 		if (args.length == 0) {
-			String s = "";
+			StringBuilder stringBuilder = new StringBuilder();
 			for (String t : plugin.getConfig().getStringList("enabled")) {
-				s += ", " + t.toLowerCase();
+				stringBuilder.append(", ").append(t.toLowerCase());
 			}
-			s = s.replaceFirst(", ", "");
+			stringBuilder = new StringBuilder(stringBuilder.toString().replaceFirst(", ", ""));
 			for (String t : plugin.getMessages().getStringList("openrp-command")) {
 				sender.sendMessage(plugin
-						.colorize(t.replace("{v}", plugin.getDescription().getVersion()).replace("{modules}", s), false));
+						.colorize(t.replace("{v}", plugin.getDescription().getVersion()).replace("{modules}", stringBuilder.toString()), false));
 
 			}
 			return true;
@@ -70,11 +71,10 @@ public class Command_OPENRP implements CommandExecutor, TabCompleter {
 							}
 							for (String t : plugin.getDesc().getFields()) {
 								if (!plugin.getDesc().isFieldSet(p, t)) {
-									String field = t;
 									String value = plugin.getDesc().getConfig()
 											.getString("fields." + t + ".default-value");
 									ORPDescriptionsChangeEvent changeevent = new ORPDescriptionsChangeEvent(
-											p.getUniqueId(), field, value);
+											p.getUniqueId(), t, value);
 									if (!changeevent.isCancelled()) {
 										plugin.getDesc().setField(p, changeevent.getValue(), changeevent.getField());
 									}
@@ -118,18 +118,17 @@ public class Command_OPENRP implements CommandExecutor, TabCompleter {
 					plugin.getDesc().registerFields();
 					plugin.getLogger().warning(
 							"Reloading Descriptions with modified fields added is not recommended, if errors occur please restart!");
-					for (Player p : plugin.getServer().getOnlinePlayers()) {
+					for (Player player : plugin.getServer().getOnlinePlayers()) {
 						if (plugin.getDesc().getFields().isEmpty()) {
 							break;
 						}
-						for (String t : plugin.getDesc().getFields()) {
-							if (!plugin.getDesc().isFieldSet(p, t)) {
-								String field = t;
-								String value = plugin.getDesc().getConfig().getString("fields." + t + ".default-value");
-								ORPDescriptionsChangeEvent changeevent = new ORPDescriptionsChangeEvent(p.getUniqueId(),
+						for (String field : plugin.getDesc().getFields()) {
+							if (!plugin.getDesc().isFieldSet(player, field)) {
+								String value = plugin.getDesc().getConfig().getString("fields." + field + ".default-value");
+								ORPDescriptionsChangeEvent changeevent = new ORPDescriptionsChangeEvent(player.getUniqueId(),
 										field, value);
 								if (!changeevent.isCancelled()) {
-									plugin.getDesc().setField(p, changeevent.getValue(), changeevent.getField());
+									plugin.getDesc().setField(player, changeevent.getValue(), changeevent.getField());
 								}
 							}
 						}
@@ -165,12 +164,12 @@ public class Command_OPENRP implements CommandExecutor, TabCompleter {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, @NotNull Command cmd, String label, String[] args) {
 
 		if (cmd.getName().equalsIgnoreCase("openrp")) {
 			if (args.length == 1) {
 
-				List<String> l = new ArrayList<String>();
+				List<String> l = new ArrayList<>();
 				if (sender.hasPermission(plugin.getConfig().getString("admin-perm"))) {
 					l.add("reload");
 				}
@@ -179,15 +178,15 @@ public class Command_OPENRP implements CommandExecutor, TabCompleter {
 			}
 			if (args.length == 2) {
 
-				List<String> l = new ArrayList<String>();
+				List<String> suggestions = new ArrayList<>();
 				if (sender.hasPermission(plugin.getConfig().getString("admin-perm"))) {
-					l.add("chat");
-					l.add("descriptions");
-					l.add("rolls");
-					l.add("time");
+					suggestions.add("chat");
+					suggestions.add("descriptions");
+					suggestions.add("rolls");
+					suggestions.add("time");
 				}
 
-				return l;
+				return suggestions;
 
 			} else {
 

@@ -8,8 +8,8 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Describes a person sending an OpenRP Chat message in a chat channel.
- * @author Darwin Jonathan
  *
+ * @author Darwin Jonathan
  */
 public class ORPDescriptionsChangeEvent extends Event implements Cancellable {
 

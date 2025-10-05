@@ -9,17 +9,18 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import openrp.OpenRP;
 import openrp.descriptions.events.ORPDescriptionsChangeEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class DescriptionCheckListener implements Listener {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 
 	public DescriptionCheckListener(OpenRP plugin) {
 		this.plugin = plugin;
 	}
 
 	@EventHandler
-	public void onPlayerDescriptionCheck(PlayerInteractEntityEvent event) {
+	public void onPlayerDescriptionCheck(@NotNull PlayerInteractEntityEvent event) {
 
 		if (event.getHand().equals(EquipmentSlot.OFF_HAND)) {
 			return;
@@ -28,11 +29,12 @@ public class DescriptionCheckListener implements Listener {
 		if (!(event.getRightClicked() instanceof Player)) {
 			return;
 		}
+		Player clicked = (Player) event.getRightClicked();
 
-		if (!(plugin.getServer().getOnlinePlayers().contains(event.getRightClicked()))) {
+		if (!(plugin.getServer().getOnlinePlayers().contains(clicked))) {
 			return;
 		}
-		
+
 		if (plugin.getDesc().getConfig().isSet("right-click-player-to-view-description")) {
 			if (!plugin.getDesc().getConfig().getBoolean("right-click-player-to-view-description")) {
 				return;
@@ -66,11 +68,10 @@ public class DescriptionCheckListener implements Listener {
 			return;
 		}
 
-		for (String s : plugin.getDesc().getFields()) {
-			if (!plugin.getDesc().isFieldSet(event.getPlayer(), s)) {
+		for (String field : plugin.getDesc().getFields()) {
+			if (!plugin.getDesc().isFieldSet(event.getPlayer(), field)) {
 
-				String field = s;
-				String value = plugin.getDesc().getConfig().getString("fields." + s + ".default-value");
+				String value = plugin.getDesc().getConfig().getString("fields." + field + ".default-value");
 
 				ORPDescriptionsChangeEvent changeevent = new ORPDescriptionsChangeEvent(event.getPlayer().getUniqueId(),
 						field, value);

@@ -6,9 +6,8 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Is ran right before a player is sent an OpenRP Rolls output in their chat.
- * 
- * @author Darwin Jonathan
  *
+ * @author Darwin Jonathan
  */
 public class ORPTimeProcessEvent extends Event {
 
@@ -39,7 +38,7 @@ public class ORPTimeProcessEvent extends Event {
 	public static HandlerList getHandlerList() {
 		return HANDLERS;
 	}
-	
+
 	public World getWorld() {
 		return world;
 	}
@@ -47,7 +46,7 @@ public class ORPTimeProcessEvent extends Event {
 	public Integer getSecond() {
 		return second;
 	}
-	
+
 	public Integer getMinute() {
 		return minute;
 	}
@@ -55,15 +54,15 @@ public class ORPTimeProcessEvent extends Event {
 	public Integer getHour() {
 		return hour;
 	}
-	
+
 	public Integer getDay() {
 		return day;
 	}
-	
+
 	public Integer getMonth() {
 		return month;
 	}
-	
+
 	public Integer getYear() {
 		return year;
 	}
@@ -75,7 +74,7 @@ public class ORPTimeProcessEvent extends Event {
 		}
 		this.second = second;
 	}
-	
+
 	public void setMinute(Integer minute) {
 		if (minute >= 60 || minute < 0) {
 			this.minute = 0;
@@ -83,7 +82,7 @@ public class ORPTimeProcessEvent extends Event {
 		}
 		this.minute = minute;
 	}
-	
+
 	public void setHour(Integer hour) {
 		if (hour >= 24 || hour < 0) {
 			this.hour = 0;
@@ -91,7 +90,7 @@ public class ORPTimeProcessEvent extends Event {
 		}
 		this.hour = hour;
 	}
-	
+
 	public void setDay(Integer day) {
 		if (day >= 32 || day < 1) {
 			this.day = 1;
@@ -99,7 +98,7 @@ public class ORPTimeProcessEvent extends Event {
 		}
 		this.day = day;
 	}
-	
+
 	public void setMonth(Integer month) {
 		if (month >= 13 || month < 1) {
 			this.month = 1;
@@ -111,5 +110,5 @@ public class ORPTimeProcessEvent extends Event {
 	public void setYear(Integer year) {
 		this.year = year;
 	}
-	
+
 }

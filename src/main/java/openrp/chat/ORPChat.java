@@ -19,6 +19,7 @@ import openrp.chat.listeners.ActionListener;
 import openrp.chat.listeners.CommandEventListener;
 import openrp.chat.listeners.ToggleSwitchListener;
 import openrp.chat.utils.ORPChatCommand;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * OpenRP Chat API instance. Can be accessed from the OpenRP main class via
@@ -29,18 +30,18 @@ import openrp.chat.utils.ORPChatCommand;
  */
 public class ORPChat {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 	private File directory;
 
-	private HashMap<Player, HashMap<String, Long>> cooldowns = new HashMap<Player, HashMap<String, Long>>();
+	private final HashMap<Player, HashMap<String, Long>> cooldowns = new HashMap<>();
 
 	private FileConfiguration config;
 	private FileConfiguration messages;
 
-	private HashMap<String, ArrayList<String>> channels = new HashMap<String, ArrayList<String>>();
-	private ArrayList<String> simpleAliasList = new ArrayList<String>();
+	private HashMap<String, ArrayList<String>> channels = new HashMap<>();
+	private ArrayList<String> simpleAliasList = new ArrayList<>();
 
-	protected ArrayList<ORPChatCommand> commands = new ArrayList<ORPChatCommand>();
+	protected ArrayList<ORPChatCommand> commands = new ArrayList<>();
 
 	public ORPChat(OpenRP plugin) {
 		this.plugin = plugin;
@@ -55,18 +56,18 @@ public class ORPChat {
 			return;
 		}
 		resetFakeCommands();
-		HashMap<String, ArrayList<String>> channels = new HashMap<String, ArrayList<String>>();
-		ArrayList<String> simpleAliasList = new ArrayList<String>();
+		HashMap<String, ArrayList<String>> channels = new HashMap<>();
+		ArrayList<String> simpleAliasList = new ArrayList<>();
 		for (String key : getConfig().getConfigurationSection("channels").getKeys(false)) {
 
-			ArrayList<String> aliases = new ArrayList<String>();
+			ArrayList<String> aliases = new ArrayList<>();
 			if (getConfig().isSet("channels." + key + ".commands")) {
 				for (String s : getConfig().getStringList("channels." + key + ".commands")) {
 					aliases.add(s.toLowerCase());
 					simpleAliasList.add(s.toLowerCase());
 				}
 				if (!getConfig().getStringList("channels." + key + ".commands").isEmpty()) {
-					ArrayList<String> a = new ArrayList<String>(aliases);
+					ArrayList<String> a = new ArrayList<>(aliases);
 					a.remove(0);
 					plugin.getLogger().info("Creating fake command for " + key + ". . .");
 					createFakeCommand(getConfig().getStringList("channels." + key + ".commands").get(0).toLowerCase(),
@@ -75,7 +76,7 @@ public class ORPChat {
 			}
 
 			channels.put(key, aliases);
-			plugin.getLogger().info(key + ": " + aliases.toString() + "");
+			plugin.getLogger().info(key + ": " + aliases);
 
 		}
 
@@ -230,8 +231,6 @@ public class ORPChat {
 
 	/**
 	 * Get the cooldown map.
-	 * 
-	 * @return
 	 */
 	public HashMap<Player, HashMap<String, Long>> getCooldowns() {
 		return cooldowns;
@@ -240,7 +239,7 @@ public class ORPChat {
 	/**
 	 * Calls a HashMap with standard replacements for this plugin.
 	 */
-	public HashMap<String, String> getStandardHashMap(Player player) {
+	public HashMap<String, String> getStandardHashMap(@NotNull Player player) {
 		HashMap<String, String> h = new HashMap<String, String>();
 		h.put("{player}", player.getName());
 		return h;
@@ -271,7 +270,7 @@ public class ORPChat {
 	public void fixFilePath() {
 		directory = new File(plugin.getDataFolder() + File.separator + "chat");
 		if (!directory.exists()) {
-			directory.mkdir();
+			if (!directory.mkdir()) plugin.getLogger().warning("Unable to create directory " + directory.getName() + ".");
 		}
 	}
 

@@ -11,14 +11,15 @@ import org.bukkit.entity.Player;
 
 import openrp.OpenRP;
 import openrp.chat.listeners.ToggleSwitchListener;
+import org.jetbrains.annotations.NotNull;
 
 public class Command_CHANNELSWITCH implements CommandExecutor, TabCompleter {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 
-	private String defaultChannel;
+	private final String defaultChannel;
 
-	public Command_CHANNELSWITCH(OpenRP plugin) {
+	public Command_CHANNELSWITCH(@NotNull OpenRP plugin) {
 		this.plugin = plugin;
 		defaultChannel = plugin.getChat().getConfig().getString("default", null);
 	}
@@ -70,10 +71,10 @@ public class Command_CHANNELSWITCH implements CommandExecutor, TabCompleter {
 		return true;
 	}
 
-	private List<String> emptyArrayList = new ArrayList<>();
+	private final List<String> emptyArrayList = new ArrayList<>();
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String @NotNull [] args) {
 		if (args.length <= 1) {
 			List<String> l = ToggleSwitchListener.getSwitchChannels();
 			l.add(defaultChannel);

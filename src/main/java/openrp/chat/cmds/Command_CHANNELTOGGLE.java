@@ -11,10 +11,11 @@ import org.bukkit.entity.Player;
 
 import openrp.OpenRP;
 import openrp.chat.listeners.ToggleSwitchListener;
+import org.jetbrains.annotations.NotNull;
 
 public class Command_CHANNELTOGGLE implements CommandExecutor, TabCompleter {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 
 	public Command_CHANNELTOGGLE(OpenRP plugin) {
 		this.plugin = plugin;
@@ -58,13 +59,12 @@ public class Command_CHANNELTOGGLE implements CommandExecutor, TabCompleter {
 		return true;
 	}
 
-	private List<String> emptyArrayList = new ArrayList<>();
+	private final List<String> emptyArrayList = new ArrayList<>();
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String @NotNull [] args) {
 		if (args.length <= 1) {
-			List<String> l = ToggleSwitchListener.getToggleChannels();
-			return l;
+			return ToggleSwitchListener.getToggleChannels();
 		}
 		return emptyArrayList;
 	}

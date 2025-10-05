@@ -15,20 +15,20 @@ import openrp.OpenRP;
 import openrp.descriptions.cmds.Command_CHARACTER;
 import openrp.descriptions.events.ORPDescriptionsChangeEvent;
 import openrp.descriptions.listeners.DescriptionCheckListener;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * OpenRP Descriptions API instance. Can be accessed from the OpenRP main class
  * via getDesc().
- * 
- * @author Darwin Jonathan
  *
+ * @author Darwin Jonathan
  */
 public class ORPDescriptions {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 	private File directory;
 
-	private HashMap<Player, Long> cooldowns = new HashMap<Player, Long>();
+	private final HashMap<Player, Long> cooldowns = new HashMap<>();
 
 	private FileConfiguration config;
 	private FileConfiguration messages;
@@ -49,7 +49,7 @@ public class ORPDescriptions {
 			plugin.getLogger().info("No Description Fields to load, skipping. . .");
 			return;
 		}
-		ArrayList<String> fields = new ArrayList<String>();
+		ArrayList<String> fields = new ArrayList<>();
 		for (String key : getConfig().getConfigurationSection("fields").getKeys(false)) {
 
 			fields.add(key);
@@ -62,7 +62,7 @@ public class ORPDescriptions {
 
 	/**
 	 * Get a list of all Description fields.
-	 * 
+	 *
 	 * @return A list of all fields.
 	 */
 	public ArrayList<String> getFields() {
@@ -71,59 +71,53 @@ public class ORPDescriptions {
 
 	/**
 	 * Checks to see if a field is set.
-	 * 
+	 *
 	 * @param player - The player to check for.
 	 * @param field  - The field to check.
 	 * @return True if it's set, false otherwise.
 	 */
-	public boolean isFieldSet(Player player, String field) {
-		if (plugin.getDesc().getUserdata().isSet(player.getUniqueId().toString() + "." + field)) {
-			return true;
-		}
-		return false;
+	public boolean isFieldSet(@NotNull Player player, String field) {
+		return plugin.getDesc().getUserdata().isSet(player.getUniqueId().toString() + "." + field);
 	}
 
 	/**
 	 * Checks to see if a field is set.
-	 * 
-	 * @param player - The UUID of the player to check for.
+	 *
+	 * @param uniqueId - The UUID of the player to check for.
 	 * @param field  - The field to check.
 	 * @return True if it's set, false otherwise.
 	 */
 	public boolean isFieldSet(UUID uniqueId, String field) {
-		if (plugin.getDesc().getUserdata().isSet(uniqueId + "." + field)) {
-			return true;
-		}
-		return false;
+		return plugin.getDesc().getUserdata().isSet(uniqueId + "." + field);
 	}
 
 	/**
 	 * Sets the value of a field for a player.
-	 * 
+	 *
 	 * @param player - The player to set for.
 	 * @param value  - The new value of the field.
 	 * @param field  - The field to set.
 	 */
-	public void setField(Player player, String value, String field) {
+	public void setField(@NotNull Player player, String value, String field) {
 		getUserdata().set(player.getUniqueId().toString() + "." + field, value);
 		saveUserdata();
 	}
 
 	/**
 	 * Sets the value of a field for a player.
-	 * 
+	 *
 	 * @param uuid  - The player's uuid to set for.
 	 * @param value - The new value of the field.
 	 * @param field - The field to set.
 	 */
-	public void setField(UUID uuid, String value, String field) {
+	public void setField(@NotNull UUID uuid, String value, String field) {
 		getUserdata().set(uuid.toString() + "." + field, value);
 		saveUserdata();
 	}
 
 	/**
 	 * Checks to see if an input String contains any OpenRP Description fields.
-	 * 
+	 *
 	 * @param input - The input String.
 	 * @return True if it contains any fields, false otherwise.
 	 */
@@ -138,7 +132,7 @@ public class ORPDescriptions {
 
 	/**
 	 * Replaces a field's value for a specific player in an input string.
-	 * 
+	 *
 	 * @param input  - The input String.
 	 * @param player - The player to replace for.
 	 * @return The replacements' value.
@@ -149,7 +143,7 @@ public class ORPDescriptions {
 		}
 		String output = input;
 		for (String f : getFields()) {
-			output = output.replaceAll("\\{orpdesc_" + f + "\\}",
+			output = output.replaceAll("\\{orpdesc_" + f + "}",
 					getUserdata().getString(player.getUniqueId().toString() + "." + f));
 		}
 		return output;
@@ -157,7 +151,7 @@ public class ORPDescriptions {
 
 	/**
 	 * Replaces a field's value for a specific player in an input string.
-	 * 
+	 *
 	 * @param input  - The input String.
 	 * @param player - The player to replace for.
 	 * @return The replacements' value.
@@ -168,7 +162,7 @@ public class ORPDescriptions {
 		}
 		String output = input;
 		for (String f : getFields()) {
-			output = output.replaceAll("\\{orpdesc_" + f + "\\}",
+			output = output.replaceAll("\\{orpdesc_" + f + "}",
 					getUserdata().getString(player.getUniqueId().toString() + "." + f));
 		}
 		return output;
@@ -176,7 +170,7 @@ public class ORPDescriptions {
 
 	/**
 	 * Replaces a field's value for a specific player in an input string.
-	 * 
+	 *
 	 * @param input - The input String.
 	 * @param uuid  - The player's uuid to replace for.
 	 * @return The replacements' value.
@@ -186,8 +180,8 @@ public class ORPDescriptions {
 			return input;
 		}
 		String output = input;
-		for (String f : getFields()) {
-			output = output.replaceAll("\\{orpdesc_" + f + "\\}", getUserdata().getString(uuid.toString() + "." + f));
+		for (String field : getFields()) {
+			output = output.replaceAll("\\{orpdesc_" + field + "}", getUserdata().getString(uuid.toString() + "." + field));
 		}
 		return output;
 	}
@@ -199,8 +193,8 @@ public class ORPDescriptions {
 	/**
 	 * Calls a HashMap with standard replacements for this plugin.
 	 */
-	public HashMap<String, String> getStandardHashMap(Player player) {
-		HashMap<String, String> h = new HashMap<String, String>();
+	public HashMap<String, String> getStandardHashMap(@NotNull Player player) {
+		HashMap<String, String> h = new HashMap<>();
 		h.put("{player}", player.getName());
 		return h;
 	}
@@ -209,7 +203,7 @@ public class ORPDescriptions {
 	 * Calls a HashMap with standard replacements for this plugin.
 	 */
 	public HashMap<String, String> getStandardHashMap(UUID uuid) {
-		HashMap<String, String> h = new HashMap<String, String>();
+		HashMap<String, String> h = new HashMap<>();
 		h.put("{player}", plugin.getServer().getOfflinePlayer(uuid).getName());
 		return h;
 	}
@@ -236,10 +230,9 @@ public class ORPDescriptions {
 					if (plugin.getDesc().getFields().isEmpty()) {
 						break;
 					}
-					for (String s : plugin.getDesc().getFields()) {
-						if (!plugin.getDesc().isFieldSet(p, s)) {
-							String field = s;
-							String value = plugin.getDesc().getConfig().getString("fields." + s + ".default-value");
+					for (String field : plugin.getDesc().getFields()) {
+						if (!plugin.getDesc().isFieldSet(p, field)) {
+							String value = plugin.getDesc().getConfig().getString("fields." + field + ".default-value");
 							ORPDescriptionsChangeEvent changeevent = new ORPDescriptionsChangeEvent(p.getUniqueId(),
 									field, value);
 							if (!changeevent.isCancelled()) {
@@ -260,7 +253,7 @@ public class ORPDescriptions {
 	public void fixFilePath() {
 		directory = new File(plugin.getDataFolder() + File.separator + "descriptions");
 		if (!directory.exists()) {
-			directory.mkdir();
+			if (!directory.mkdir()) plugin.getLogger().warning("Unable to create directory " + directory.getName() + ".");
 		}
 	}
 

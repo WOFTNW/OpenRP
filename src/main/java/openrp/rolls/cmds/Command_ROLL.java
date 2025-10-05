@@ -15,7 +15,7 @@ import openrp.utils.NumberParser;
 
 public class Command_ROLL implements CommandExecutor, TabCompleter {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 
 	public Command_ROLL(OpenRP plugin) {
 		this.plugin = plugin;
@@ -40,7 +40,7 @@ public class Command_ROLL implements CommandExecutor, TabCompleter {
 
 		if (args.length == 0) {
 
-			ArrayList<Player> recipients = new ArrayList<Player>();
+			ArrayList<Player> recipients = new ArrayList<>();
 			if (plugin.getRolls().getConfig().isSet("message.range")) {
 				for (Player p : plugin.getServer().getOnlinePlayers()) {
 					if (!p.equals(player)) {
@@ -71,10 +71,10 @@ public class Command_ROLL implements CommandExecutor, TabCompleter {
 						plugin.getRolls().getStandardHashMap(player, output, preprintevent.getMaximum().toString()));
 
 				plugin.getLogger()
-						.info(player.getName() + " rolled " + output.toString() + " / " + preprintevent.getMaximum());
+						.info(player.getName() + " rolled " + output + " / " + preprintevent.getMaximum());
 
 				player.sendMessage(messageToSend);
-				
+
 				for (Player p : recipients) {
 
 					p.sendMessage(messageToSend);
@@ -91,8 +91,8 @@ public class Command_ROLL implements CommandExecutor, TabCompleter {
 					return true;
 				}
 
-				Integer min = plugin.getRolls().getConfig().getInt("default-rolls.min");
-				Integer max = plugin.getRolls().getConfig().getInt("default-rolls.max");
+				int min = plugin.getRolls().getConfig().getInt("default-rolls.min");
+				int max;
 				if (!args[0].toLowerCase().contains("-")) {
 					if (!NumberParser.isCreatable(args[0])) {
 						player.sendMessage(plugin.getRolls().getMessage("invalid-use").replace("{usage}",

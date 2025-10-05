@@ -10,19 +10,19 @@ import org.bukkit.event.Listener;
 import openrp.OpenRP;
 import openrp.chat.ORPChat;
 import openrp.chat.events.ORPChatEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A listener built into OpenRP that handles *action*-type messages. This is due
  * to the large amount of requests for doing something like this.
- * 
- * @author Darwin Jonathan
  *
+ * @author Darwin Jonathan
  */
 public class ActionListener implements Listener {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 
-	public ActionListener(OpenRP plugin, ORPChat chat) {
+	public ActionListener(OpenRP plugin, @NotNull ORPChat chat) {
 		channelsWithActions = new HashMap<>();
 		this.plugin = plugin;
 		for (String channel : chat.getChannels().keySet()) {
@@ -51,7 +51,7 @@ public class ActionListener implements Listener {
 	Map<String, String[]> channelsWithActions = new HashMap<>();
 
 	@EventHandler
-	public void onChatMessage(ORPChatEvent event) {
+	public void onChatMessage(@NotNull ORPChatEvent event) {
 		String channel = event.getChannel();
 		if (ToggleSwitchListener.usingSwitches()) {
 			String switchChannel = ToggleSwitchListener.getSwitchChannel(event.getPlayer());
@@ -76,7 +76,7 @@ public class ActionListener implements Listener {
 			}
 		}
 
-		String assemble = "";
+		StringBuilder assemble = new StringBuilder();
 		{
 			boolean isInsideAction = false;
 			String prefix = plugin.colorize(plugin.parsePlaceholders(
@@ -88,15 +88,15 @@ public class ActionListener implements Listener {
 					event.getPlayer(),
 					new HashMap<>()), false);
 			for (String substring : event.getMessage().split(SPECIAL_CHARACTER)) {
-				if (isInsideAction == false) {
-					assemble += prefix + substring;
+				if (!isInsideAction) {
+					assemble.append(prefix).append(substring);
 				} else {
-					assemble += suffix + substring + suffix;
+					assemble.append(suffix).append(substring).append(suffix);
 				}
 				isInsideAction = !isInsideAction; // Flip value here
 			}
 		}
-		event.setMessage(assemble);
+		event.setMessage(assemble.toString());
 	}
 
 }

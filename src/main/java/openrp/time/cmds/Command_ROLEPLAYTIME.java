@@ -12,17 +12,18 @@ import org.bukkit.command.TabCompleter;
 import openrp.OpenRP;
 import openrp.time.utils.TimeHandler;
 import openrp.utils.NumberParser;
+import org.jetbrains.annotations.NotNull;
 
 public class Command_ROLEPLAYTIME implements CommandExecutor, TabCompleter {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 
 	public Command_ROLEPLAYTIME(OpenRP plugin) {
 		this.plugin = plugin;
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String @NotNull [] args) {
 
 		/* No longer required. See Command#setPermission();
 		if (!sender.hasPermission(plugin.getTime().getConfig().getString("manage-perm"))) {
@@ -131,7 +132,7 @@ public class Command_ROLEPLAYTIME implements CommandExecutor, TabCompleter {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, @NotNull Command cmd, String label, String[] args) {
 
 		if (cmd.getName().equalsIgnoreCase("roleplaytime")) {
 

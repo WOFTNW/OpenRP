@@ -7,8 +7,8 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Describes a person sending an OpenRP Chat message in a chat channel.
- * @author Darwin Jonathan
  *
+ * @author Darwin Jonathan
  */
 public class ORPChatEvent extends Event implements Cancellable {
 
@@ -18,7 +18,7 @@ public class ORPChatEvent extends Event implements Cancellable {
 	private String message;
 	private String channel;
 	private final boolean wasCommand;
-	
+
 	@Deprecated
 	public ORPChatEvent(Player player, String message, String channel) {
 		this.player = player;
@@ -26,7 +26,7 @@ public class ORPChatEvent extends Event implements Cancellable {
 		this.channel = channel;
 		this.wasCommand = false;
 	}
-	
+
 	public ORPChatEvent(Player player, String message, String channel, boolean wasCommand) {
 		this.player = player;
 		this.message = message;
@@ -63,7 +63,7 @@ public class ORPChatEvent extends Event implements Cancellable {
 	public String getChannel() {
 		return channel;
 	}
-	
+
 	public boolean wasCommand() {
 		return wasCommand;
 	}

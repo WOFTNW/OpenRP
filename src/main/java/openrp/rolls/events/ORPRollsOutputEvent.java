@@ -7,9 +7,8 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Is ran right before a player is sent an OpenRP Rolls output in their chat.
- * 
- * @author Darwin Jonathan
  *
+ * @author Darwin Jonathan
  */
 public class ORPRollsOutputEvent extends Event implements Cancellable {
 

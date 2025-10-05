@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class ORPChatCommand extends Command {
 
@@ -20,16 +21,16 @@ public class ORPChatCommand extends Command {
 	}
 
 	@Override
-	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
-		
-		List<String> l = new ArrayList<String>();
-		
+	public List<String> tabComplete(CommandSender sender, String label, String @NotNull [] args) {
+
+		List<String> suggestions = new ArrayList<>();
+
 		if (args.length <= 1) {
-			l.add("<message>");
+			suggestions.add("<message>");
 		}
-		
-		return l;
-		
+
+		return suggestions;
+
 	}
 
 }

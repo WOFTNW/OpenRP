@@ -9,13 +9,13 @@ public class TimeHandler {
 	private OpenRP plugin;
 	private final World world;
 
-	private int second = 0;
-	private int minute = 0;
-	private int hour = 0;
+	private int second;
+	private int minute;
+	private int hour;
 
-	private int day = 1;
-	private int month = 1;
-	private int year = 0;
+	private int day;
+	private int month;
+	private int year;
 
 	public TimeHandler(OpenRP plugin, World world, int second, int minute, int hour, int day, int month, int year) {
 		this.plugin = plugin;
@@ -36,7 +36,7 @@ public class TimeHandler {
 		plugin.getTime().getTimedata().set(world.getName() + ".month", month);
 		plugin.getTime().getTimedata().set(world.getName() + ".year", year);
 	}
-	
+
 	public World getWorld() {
 		return world;
 	}

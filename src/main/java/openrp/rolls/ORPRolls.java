@@ -11,17 +11,17 @@ import org.bukkit.entity.Player;
 
 import openrp.OpenRP;
 import openrp.rolls.cmds.Command_ROLL;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * OpenRP Rolls API instance. Can be accessed from the OpenRP main class via
  * getRolls().
- * 
- * @author Darwin Jonathan
  *
+ * @author Darwin Jonathan
  */
 public class ORPRolls {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 	private File directory;
 
 	private FileConfiguration config;
@@ -33,7 +33,7 @@ public class ORPRolls {
 
 	/**
 	 * Rolls a number between min and max, inclusive, outputting the result.
-	 * 
+	 *
 	 * @param min - Minimum boundary.
 	 * @param max - Maximum boundary.
 	 * @return The output number.
@@ -47,8 +47,8 @@ public class ORPRolls {
 	/**
 	 * Calls a HashMap with standard replacements for this plugin.
 	 */
-	public HashMap<String, String> getStandardHashMap(Player player, Integer roll, String boundary) {
-		HashMap<String, String> h = new HashMap<String, String>();
+	public HashMap<String, String> getStandardHashMap(@NotNull Player player, @NotNull Integer roll, String boundary) {
+		HashMap<String, String> h = new HashMap<>();
 		h.put("{player}", player.getName());
 		h.put("{roll}", roll.toString());
 		h.put("{max}", boundary);
@@ -73,7 +73,7 @@ public class ORPRolls {
 	public void fixFilePath() {
 		directory = new File(plugin.getDataFolder() + File.separator + "rolls");
 		if (!directory.exists()) {
-			directory.mkdir();
+			if (!directory.mkdir()) plugin.getLogger().warning("Unable to create directory " + directory.getName() + ".");
 		}
 	}
 

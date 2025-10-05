@@ -7,8 +7,8 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Is ran right before a player is sent an OpenRP Chat message in their chat.
- * @author Darwin Jonathan
  *
+ * @author Darwin Jonathan
  */
 public class ORPChatPreprintEvent extends Event implements Cancellable {
 
@@ -55,7 +55,7 @@ public class ORPChatPreprintEvent extends Event implements Cancellable {
 	public String getChannel() {
 		return channel;
 	}
-	
+
 	public Player getSender() {
 		return sender;
 	}

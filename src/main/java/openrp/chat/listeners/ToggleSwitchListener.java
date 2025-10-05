@@ -18,23 +18,21 @@ import openrp.chat.events.ORPChatEvent;
 import openrp.chat.events.ORPChatPreprintEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A listener built into OpenRP that handles toggling and switching channels.
  * This is due to the large amount of requests for doing something like this.
- * 
- * @author Darwin Jonathan
  *
+ * @author Darwin Jonathan
  */
 public class ToggleSwitchListener implements Listener {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 
 	private static Map<Player, List<String>> toggles;
 	private static Map<Player, String> switches;
-
-	private File file;
-	private FileConfiguration configfile;
 
 	private static List<String> toggleChannels;
 	private static List<String> switchChannels;
@@ -42,15 +40,15 @@ public class ToggleSwitchListener implements Listener {
 	private static boolean useToggles;
 	private static boolean useSwitches;
 
-	public ToggleSwitchListener(OpenRP plugin) {
+	public ToggleSwitchListener(@NotNull OpenRP plugin) {
 		this.plugin = plugin;
 		toggles = new HashMap<>();
 		switches = new HashMap<>();
-		file = new File(plugin.getDataFolder() + File.separator + "chat", "toggle-and-switcher.yml");
+		File file = new File(plugin.getDataFolder() + File.separator + "chat", "toggle-and-switcher.yml");
 		if (!file.exists()) {
 			plugin.saveResource("chat/toggle-and-switcher.yml", false);
 		}
-		configfile = YamlConfiguration.loadConfiguration(file);
+		FileConfiguration configfile = YamlConfiguration.loadConfiguration(file);
 		useToggles = configfile.getBoolean("enable-channel-toggler", false);
 		useSwitches = configfile.getBoolean("enable-channel-switcher", false);
 		toggleChannels = configfile.isSet("toggleable-channels") ? configfile.getStringList("toggleable-channels")
@@ -59,19 +57,21 @@ public class ToggleSwitchListener implements Listener {
 				: new ArrayList<String>();
 	}
 
-	public static final boolean usingToggles() {
+	public static boolean usingToggles() {
 		return useToggles;
 	}
 
-	public static final boolean usingSwitches() {
+	public static boolean usingSwitches() {
 		return useSwitches;
 	}
 
-	public static final List<String> getToggleChannels() {
+	@Contract(value = " -> new", pure = true)
+	public static @NotNull List<String> getToggleChannels() {
 		return new ArrayList<>(toggleChannels);
 	}
 
-	public static final List<String> getSwitchChannels() {
+	@Contract(value = " -> new", pure = true)
+	public static @NotNull List<String> getSwitchChannels() {
 		return new ArrayList<>(switchChannels);
 	}
 
@@ -80,7 +80,7 @@ public class ToggleSwitchListener implements Listener {
 	}
 
 	public static List<String> getToggleList(Player p) {
-		return toggles.containsKey(p) ? toggles.get(p) : new ArrayList<String>();
+		return toggles.containsKey(p) ? toggles.get(p) : new ArrayList<>();
 	}
 
 	@EventHandler
@@ -117,11 +117,11 @@ public class ToggleSwitchListener implements Listener {
 	}
 
 	public static String getSwitchChannel(Player p) {
-		return switches.containsKey(p) ? switches.get(p) : null;
+		return switches.getOrDefault(p, null);
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
-	public void onPlayerLogin(PlayerJoinEvent event){
+	public void onPlayerLogin(PlayerJoinEvent event) {
 		if (!useSwitches) {
 			return;
 		}
@@ -161,7 +161,7 @@ public class ToggleSwitchListener implements Listener {
 										((Long) (plugin.getChat().getConfig()
 												.getInt("channels." + channel + ".cooldown")
 												- (System.currentTimeMillis() - plugin.getChat().getCooldowns()
-														.get(event.getPlayer()).get(channel)) / 1000)).toString()));
+												.get(event.getPlayer()).get(channel)) / 1000)).toString()));
 								event.setCancelled(true);
 							}
 						}

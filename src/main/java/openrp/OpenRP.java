@@ -5,12 +5,12 @@ package openrp;
  *   it under the terms of the GNU Lesser General Public License as published by
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
- *   
+ *
  *   OpenRP is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU Lesser General Public License for more details.
- *   
+ *
  *   Check the full license at <http://www.gnu.org/licenses/>.
  */
 
@@ -26,7 +26,6 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import openrp.chat.expansions.PAPI_Chat;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -35,23 +34,21 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.md_5.bungee.api.ChatColor;
 import openrp.chat.ORPChat;
 import openrp.descriptions.ORPDescriptions;
-import openrp.descriptions.expansions.PAPI_Descriptions;
 import openrp.rolls.ORPRolls;
 import openrp.time.ORPTime;
-import openrp.time.expansions.PAPI_Time;
 import openrp.time.utils.TimeHandler;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The main class of OpenRP. Fork into this to get general access to OpenRP's
  * API.
- * 
- * @author Darwin Jonathan
  *
+ * @author Darwin Jonathan
  */
 public class OpenRP extends JavaPlugin {
 
 	private static final Integer resourceID = 73785;
-	private OpenRP plugin = this;
+	private final OpenRP plugin = this;
 
 	private FileConfiguration messages;
 
@@ -110,12 +107,14 @@ public class OpenRP extends JavaPlugin {
 		{
 			File file_test = new File(getDataFolder() + File.separator + path);
 			if (!file_test.exists()) {
-				file_test.mkdir();
+				if (!file_test.mkdir())
+					getLogger().warning("Unable to create director " + path + ". Is read/write access granted?");
 			}
 		}
 		if (!file_file.exists()) {
 			try {
-				file_file.createNewFile();
+				if (!file_file.createNewFile())
+					getLogger().warning("Unable to create director " + path + ". Is read/write access granted?");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -126,7 +125,7 @@ public class OpenRP extends JavaPlugin {
 	/**
 	 * Saves an arbitrary configuration file in the OpenRP Directory.
 	 */
-	public void saveArbitraryFile(FileConfiguration file, String nameOfFile, String path) {
+	public void saveArbitraryFile(@NotNull FileConfiguration file, String nameOfFile, String path) {
 		File file_file = new File(getDataFolder() + File.separator + path, nameOfFile);
 		try {
 			file.save(file_file);
@@ -138,14 +137,14 @@ public class OpenRP extends JavaPlugin {
 	/**
 	 * Parses the input in accordance to the given extra placeholders and according
 	 * to PAPI or MVdW.
-	 * 
+	 *
 	 * @param input  - The input String to parse.
 	 * @param player - The input Player to parse for.
 	 * @param extra  - A HashMap of two strings, the key being the regex, and the
 	 *               value being the replacement.
 	 * @return The final parsed String.
 	 */
-	public String parsePlaceholders(String input, Player player, HashMap<String, String> extra) {
+	public String parsePlaceholders(String input, Player player, @NotNull HashMap<String, String> extra) {
 		String output = input;
 		for (String key : extra.keySet()) {
 			output = output.replace(key, extra.get(key));
@@ -155,11 +154,11 @@ public class OpenRP extends JavaPlugin {
 			output = getDesc().replaceFieldPlaceholders(output, player);
 		}
 
-		if (api_papi) {
-			if (me.clip.placeholderapi.PlaceholderAPI.containsPlaceholders(output)) {
-				output = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, output);
-			}
-		}
+//		if (api_papi) {
+//			if (me.clip.placeholderapi.PlaceholderAPI.containsPlaceholders(output)) {
+//				output = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, output);
+//			}
+//		}
 
 		return plugin.colorize(output, false);
 	}
@@ -167,14 +166,14 @@ public class OpenRP extends JavaPlugin {
 	/**
 	 * Parses the input in accordance to the given extra placeholders and according
 	 * to PAPI or MVdW.
-	 * 
+	 *
 	 * @param input - The input String to parse.
 	 * @param uuid  - The input player's uuid to parse for.
 	 * @param extra - A HashMap of two strings, the key being the regex, and the
 	 *              value being the replacement.
 	 * @return The final parsed String.
 	 */
-	public String parsePlaceholders(String input, UUID uuid, HashMap<String, String> extra) {
+	public String parsePlaceholders(String input, UUID uuid, @NotNull HashMap<String, String> extra) {
 		String output = input;
 		for (String key : extra.keySet()) {
 			output = output.replace(key, extra.get(key));
@@ -184,12 +183,12 @@ public class OpenRP extends JavaPlugin {
 			output = getDesc().replaceFieldPlaceholders(output, uuid);
 		}
 
-		if (api_papi) {
-			if (me.clip.placeholderapi.PlaceholderAPI.containsPlaceholders(output)) {
-				output = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(getServer().getOfflinePlayer(uuid),
-						output);
-			}
-		}
+//		if (api_papi) {
+//			if (me.clip.placeholderapi.PlaceholderAPI.containsPlaceholders(output)) {
+//				output = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(getServer().getOfflinePlayer(uuid),
+//						output);
+//			}
+//		}
 
 		return output;
 	}
@@ -197,8 +196,8 @@ public class OpenRP extends JavaPlugin {
 	/**
 	 * Returns the colorized String according to the ChatColor rules, using the &
 	 * color code. 1.16 addition: also handles hex codes. Exists for convenience.
-	 * 
-	 * @param input - The input String to parse.
+	 *
+	 * @param input    - The input String to parse.
 	 * @param stripHex - Whether to strip Hex codes instead of colorizing them.
 	 * @return The final colorized String.
 	 */
@@ -219,8 +218,8 @@ public class OpenRP extends JavaPlugin {
 			String hexcode = matcher.group();
 			hexcode = hexcode.toLowerCase();
 			if (!stripHex) {
-				String fixed = new String(new char[] { '&', hexcode.charAt(1), '&', hexcode.charAt(2), '&',
-						hexcode.charAt(3), '&', hexcode.charAt(4), '&', hexcode.charAt(5), '&', hexcode.charAt(6) });
+				String fixed = new String(new char[]{'&', hexcode.charAt(1), '&', hexcode.charAt(2), '&',
+						hexcode.charAt(3), '&', hexcode.charAt(4), '&', hexcode.charAt(5), '&', hexcode.charAt(6)});
 				value = value.replace(hexcode, "&x" + fixed);
 			} else {
 				value = value.replace(hexcode, "");
@@ -231,14 +230,12 @@ public class OpenRP extends JavaPlugin {
 
 	/**
 	 * Gets the latest version of OpenRP from SpigotMC.
-	 * 
-	 * @return A String representing the latest version.
 	 */
 	private void getLatestVersion(final Consumer<String> consumer) {
 		getServer().getScheduler().runTaskAsynchronously(this, () -> {
 			try (InputStream inputStream = new URL(
-					"https://api.spigotmc.org/legacy/update.php?resource=" + resourceID.toString()).openStream();
-					Scanner scanner = new Scanner(inputStream)) {
+					"https://api.spigotmc.org/legacy/update.php?resource=" + resourceID).openStream();
+				 Scanner scanner = new Scanner(inputStream)) {
 				if (scanner.hasNext()) {
 					consumer.accept(scanner.next());
 				}
@@ -283,15 +280,15 @@ public class OpenRP extends JavaPlugin {
 			getLogger().info("Detected Bukkit Version: " + version);
 			String[] list = version.split(Pattern.quote("-"));
 			String[] newList = list[0].split(Pattern.quote("."));
-			int i = 0;
-			i = Integer.valueOf(newList[0]) + Integer.valueOf(newList[1]);
+			int i;
+			i = Integer.parseInt(newList[0]) + Integer.parseInt(newList[1]);
 			// 1 + 13 = 14 -> 1.13
-			if (i < 14 && Integer.valueOf(newList[0]) < 2) {
+			if (i < 14 && Integer.parseInt(newList[0]) < 2) {
 				getLogger().severe("Bukkit Version looks to be lower than 1.13, OpenRP only works on 1.13+");
 				getServer().getPluginManager().disablePlugin(this);
 			}
 			// 1 + 16 = 17 -> 1.16
-			if (i >= 17 && Integer.valueOf(newList[0]) < 2) {
+			if (i >= 17 && Integer.parseInt(newList[0]) < 2) {
 				getLogger().info("Bukkit Version is 1.16+, hex color code support enabled!");
 				canUseHex = true;
 			}
@@ -300,7 +297,7 @@ public class OpenRP extends JavaPlugin {
 		/*
 		 * Why was this needed? // Run other things after 1 tick.
 		 * getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-		 * 
+		 *
 		 * @Override public void run() {
 		 */
 
@@ -355,7 +352,7 @@ public class OpenRP extends JavaPlugin {
 		/*
 		 * Probably unneeded. getServer().getScheduler().runTask(plugin, new Runnable()
 		 * {
-		 * 
+		 *
 		 * @Override public void run() {
 		 */
 
@@ -367,14 +364,14 @@ public class OpenRP extends JavaPlugin {
 
 		plugin.getLogger().info("Registering Descriptions Expansions...");
 		plugin.getLogger().info("Registering Time Expansions...");
-		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-			PAPI_Descriptions papi_ORPDESC = new PAPI_Descriptions(plugin);
-			papi_ORPDESC.register();
-			PAPI_Time papi_ORPTIME = new PAPI_Time(plugin);
-			papi_ORPTIME.register();
-			PAPI_Chat papi_ORPCHAT = new PAPI_Chat(plugin);
-			papi_ORPCHAT.register();
-		}
+//		if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+//			PAPI_Descriptions papi_ORPDESC = new PAPI_Descriptions(plugin);
+//			papi_ORPDESC.register();
+//			PAPI_Time papi_ORPTIME = new PAPI_Time(plugin);
+//			papi_ORPTIME.register();
+//			PAPI_Chat papi_ORPCHAT = new PAPI_Chat(plugin);
+//			papi_ORPCHAT.register();
+//		}
 
 		/*
 		 * } });

@@ -9,20 +9,20 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import net.md_5.bungee.api.ChatColor;
 import openrp.OpenRP;
 import openrp.chat.events.ORPChatEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A listener built into OpenRP Chat that runs when Chat functions get used,
  * such as channel commands, talking in the default chat, or tab-completing a
  * command.
- * 
+ * <p>
  * Each chat event will also create an ORPChatEvent that can be listened to.
- * 
- * @author Darwin Jonathan
  *
+ * @author Darwin Jonathan
  */
 public class CommandEventListener implements Listener {
 
-	private OpenRP plugin;
+	private final OpenRP plugin;
 
 	public CommandEventListener(OpenRP plugin) {
 		this.plugin = plugin;
@@ -30,7 +30,7 @@ public class CommandEventListener implements Listener {
 
 	// Highest priority because - it has the final say: "check if event is cancelled by someone else first"
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onChatCommandSent(PlayerCommandPreprocessEvent event) {
+	public void onChatCommandSent(@NotNull PlayerCommandPreprocessEvent event) {
 
 		// Fast-checking if its our command is actually an OpenRP Chat Command. Just to
 		// make sure we don't lag any other commands that aren't OpenRP.
@@ -49,7 +49,7 @@ public class CommandEventListener implements Listener {
 		event.setCancelled(true);
 
 		// Let's quickly check if there's any message, no point in bothering otherwise.
-		if (parser.length <= 1) {
+		if (parser.length == 1) {
 			event.getPlayer()
 					.sendMessage(
 							plugin.getChat().getMessage("invalid-use")
@@ -92,7 +92,7 @@ public class CommandEventListener implements Listener {
 										((Long) (plugin.getChat().getConfig()
 												.getInt("channels." + channel + ".cooldown")
 												- (System.currentTimeMillis() - plugin.getChat().getCooldowns()
-														.get(event.getPlayer()).get(channel)) / 1000)).toString()));
+												.get(event.getPlayer()).get(channel)) / 1000)).toString()));
 								return;
 							}
 						}
@@ -103,24 +103,24 @@ public class CommandEventListener implements Listener {
 		}
 
 		// Let's have our message assembled.
-		String msg = "";
+		StringBuilder msg = new StringBuilder();
 		for (String s : parser) {
-			msg += " " + s;
+			msg.append(" ").append(s);
 		}
-		msg = msg.replaceFirst(" " + parser[0] + " ", "");
+		msg = new StringBuilder(msg.toString().replaceFirst(" " + parser[0] + " ", ""));
 
 		// Let's strip any colors if the player doesn't have perms here.
 		// This way we can replace colors properly in both chat & preprint events.
 		boolean hasPerm = event.getPlayer()
 				.hasPermission(plugin.getChat().getConfig().getString("channels." + channel + ".color-code-perm"));
-		msg = plugin.colorize(msg, !hasPerm);
+		msg = new StringBuilder(plugin.colorize(msg.toString(), !hasPerm));
 		if (!hasPerm) {
-			msg = ChatColor.stripColor(msg);
+			msg = new StringBuilder(ChatColor.stripColor(msg.toString()));
 		}
 
 		// Everything's going well. Let's call an ORPChatEvent.
 
-		final String fmsg = msg;
+		final String fmsg = msg.toString();
 		final String fchannel = channel;
 
 		plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
@@ -142,7 +142,7 @@ public class CommandEventListener implements Listener {
 		});
 
 	}
-	
+
 	// Highest priority because - it has the final say: "check if event is cancelled by someone else first"
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onChatMessageInDefaultChannel(AsyncPlayerChatEvent event) {
@@ -185,7 +185,7 @@ public class CommandEventListener implements Listener {
 										((Long) (plugin.getChat().getConfig()
 												.getInt("channels." + channel + ".cooldown")
 												- (System.currentTimeMillis() - plugin.getChat().getCooldowns()
-														.get(event.getPlayer()).get(channel)) / 1000)).toString()));
+												.get(event.getPlayer()).get(channel)) / 1000)).toString()));
 								return;
 							}
 						}
@@ -227,7 +227,7 @@ public class CommandEventListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onChatMessageSent(ORPChatEvent event) {
+	public void onChatMessageSent(@NotNull ORPChatEvent event) {
 
 		plugin.getLogger()
 				.info(event.getPlayer().getName() + " in "
