@@ -7,7 +7,7 @@ authors:
 - Tanguygab
 website: http://www.untold-potential.eu
 
-main: openrp.OpenRP
+main: org.woftnw.openrp.OpenRP
 api-version: 1.13
 softdepend:
 - PlaceholderAPI

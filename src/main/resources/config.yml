@@ -3,8 +3,8 @@
 # Need help? Learn to set me up here! Navigate via the pages on the right side.
 # https://github.com/fishydarwin/OpenRP/wiki
 
-# Permission for /openrp.
-admin-perm: "openrp.admin"
+# Permission for /org.woftnw.openrp.
+admin-perm: "org.woftnw.openrp.admin"
 
 # The modules that you want enabled
 # To remove a module just delete that line entirely
